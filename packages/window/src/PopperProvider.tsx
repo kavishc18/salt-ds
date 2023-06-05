@@ -9,14 +9,21 @@ import {
   useMemo,
 } from "react";
 import { FloatingPortal } from "@floating-ui/react";
+import { UseFloatingUIProps } from "@salt-ds/core";
+
+export interface PopperProps extends UseFloatingUIProps {
+  /**
+   * Option to not render the popper.
+   */
+  disabled: boolean;
+}
 
 export interface PopperContextType {
-  Component: ComponentType<PropsWithChildren>;
+  Component: ComponentType<PropsWithChildren<PopperProps>>;
 }
 
 const PopperContext = createContext<PopperContextType>({
   Component: forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
-    // @ts-ignore
     const { open, disabled, ...rest } = props;
     return open && !disabled ? (
       <FloatingPortal>
