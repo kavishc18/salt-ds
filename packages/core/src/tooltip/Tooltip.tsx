@@ -7,11 +7,8 @@ import {
   ReactNode,
   Ref,
 } from "react";
-import { FloatingArrow, FloatingPortal } from "@floating-ui/react";
-import { useWindow } from "@salt-ds/window";
-import { useComponentCssInjection } from "@salt-ds/styles";
 
-import { StatusIndicator, ValidationStatus } from "../status-indicator";
+import { ValidationStatus } from "../status-indicator";
 import {
   makePrefixer,
   mergeProps,
@@ -21,7 +18,8 @@ import {
 import { SaltProvider } from "../salt-provider";
 
 import { useTooltip, UseTooltipProps } from "./useTooltip";
-import tooltipCss from "./Tooltip.css";
+import { TooltipBase } from "./TooltipBase";
+import { usePopper } from "@salt-ds/window";
 
 const withBaseName = makePrefixer("saltTooltip");
 
@@ -87,12 +85,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       ...rest
     } = props;
 
-    const targetWindow = useWindow();
-    useComponentCssInjection({
-      testId: "salt-tooltip",
-      css: tooltipCss,
-      window: targetWindow,
-    });
+    const { Component } = usePopper();
 
     const hookProps: UseTooltipProps = {
       open: openProp,
@@ -127,44 +120,24 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             ref: triggerRef,
           })}
 
-        {open && !disabled && (
-          <FloatingPortal>
-            {/* The provider is needed to support the use case where an app has nested modes. The element that is portalled needs to have the same style as the current scope */}
-            <SaltProvider>
-              <div
-                className={clsx(
-                  withBaseName(),
-                  withBaseName(status),
-                  className
-                )}
-                ref={floatingRef}
-                {...getTooltipProps()}
-              >
-                <div className={withBaseName("container")}>
-                  {!hideIcon && (
-                    <StatusIndicator
-                      status={status}
-                      size={1}
-                      className={withBaseName("icon")}
-                    />
-                  )}
-                  <span className={withBaseName("content")}>{content}</span>
-                </div>
-                {!hideArrow && (
-                  <FloatingArrow
-                    {...arrowProps}
-                    className={withBaseName("arrow")}
-                    strokeWidth={1}
-                    fill="var(--salt-container-primary-background)"
-                    stroke="var(--tooltip-status-borderColor)"
-                    height={5}
-                    width={10}
-                  />
-                )}
-              </div>
-            </SaltProvider>
-          </FloatingPortal>
-        )}
+        <Component
+          className={clsx(withBaseName(), withBaseName(status), className)}
+          open={open}
+          disabled={disabled}
+          ref={floatingRef}
+          {...getTooltipProps()}
+        >
+          {/* The provider is needed to support the use case where an app has nested modes. The element that is portalled needs to have the same style as the current scope */}
+          <SaltProvider>
+            <TooltipBase
+              hideIcon={hideIcon}
+              status={status}
+              content={content}
+              hideArrow={hideArrow}
+              arrowProps={arrowProps}
+            />
+          </SaltProvider>
+        </Component>
       </>
     );
   }

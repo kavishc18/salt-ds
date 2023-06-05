@@ -1,11 +1,18 @@
-import type { Middleware, Placement, Strategy } from "@floating-ui/react";
+import type {
+  Middleware,
+  Placement,
+  Platform,
+  Strategy,
+} from "@floating-ui/react";
 import {
   autoUpdate,
   flip,
   limitShift,
+  platform,
   shift,
   useFloating,
 } from "@floating-ui/react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 
 export type UseFloatingUIProps = {
   /**
@@ -23,6 +30,28 @@ export type UseFloatingUIProps = {
    */
   onOpenChange?: (open: boolean) => void;
 };
+
+const platformContext = createContext<Platform>(platform);
+
+export interface PlatformProviderProps {
+  platform: Platform;
+  children: ReactNode;
+}
+
+export function PlatformProvider(props: PlatformProviderProps) {
+  const { platform: platformProp, children } = props;
+  const value = useMemo(() => platformProp, [platformProp]);
+
+  return (
+    <platformContext.Provider value={value}>
+      {children}
+    </platformContext.Provider>
+  );
+}
+
+export function usePlatform() {
+  return useContext(platformContext);
+}
 
 export const DEFAULT_FLOATING_UI_MIDDLEWARE = [
   flip(),
