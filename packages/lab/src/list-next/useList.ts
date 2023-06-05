@@ -21,6 +21,7 @@ import { useEventCallback } from "../utils";
 interface UseListProps {
   children: ReactNode;
   deselectable: boolean;
+  defaultValues: number[];
   displayedItemCount: number;
   onFocus: (element: Element) => void;
   onKeyDown: (element: Element) => void;
@@ -42,6 +43,7 @@ const getSelected = (children: ReactNode): number[] =>
 export const useList = ({
   children,
   deselectable,
+  defaultValues,
   displayedItemCount,
   onFocus,
   onKeyDown,
@@ -52,8 +54,9 @@ export const useList = ({
 
   const [activeDescendant, setActiveDescendant] = useState<string>("");
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const hasDefaultValues = defaultValues && defaultValues.length !== 0;
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>(
-    getSelected(children)
+    hasDefaultValues ? defaultValues : getSelected(children)
   );
   const [allOptions, setAllOptions] = useState<Element[]>([]);
   const [activeOptions, setActiveOptions] = useState<Element[]>([]);

@@ -27,6 +27,7 @@ export interface ListNextProps extends HTMLAttributes<HTMLUListElement> {
   ListItem?: ReactElement;
   borderless?: boolean;
   deselectable?: boolean;
+  defaultValues?: number[];
   displayedItemCount?: number;
 }
 
@@ -45,6 +46,7 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
       disabled,
       displayedItemCount: displayedItemCountProp,
       deselectable = false,
+      defaultValues = [],
       ListItem = DefaultListItem,
       emptyMessage,
       onSelect,
@@ -89,6 +91,7 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
     } = useList({
       children,
       deselectable,
+      defaultValues,
       displayedItemCount,
       onFocus,
       onKeyDown,
