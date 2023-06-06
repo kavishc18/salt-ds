@@ -1,7 +1,10 @@
 import {
-  Children, FocusEventHandler,
-  isValidElement, KeyboardEventHandler,
-  MouseEvent, MouseEventHandler,
+  Children,
+  FocusEventHandler,
+  isValidElement,
+  KeyboardEventHandler,
+  MouseEvent,
+  MouseEventHandler,
   ReactNode,
   useEffect,
   useRef,
@@ -27,6 +30,9 @@ interface UseListProps {
   onFocus?: FocusEventHandler;
   onKeyDown?: KeyboardEventHandler;
   onMouseDown?: MouseEventHandler;
+  downButtonRef?: MouseEventHandler | KeyboardEventHandler;
+  upButtonRef?: MouseEventHandler | KeyboardEventHandler;
+  selectButtonRef?: MouseEventHandler | KeyboardEventHandler;
 }
 
 const getSelected = (children: ReactNode): number[] =>
@@ -49,6 +55,9 @@ export const useList = ({
   onKeyDown,
   onBlur,
   onMouseDown,
+  downButtonRef,
+  upButtonRef,
+  selectButtonRef,
 }: UseListProps) => {
   const listRef = useRef<HTMLUListElement | null>(null);
   let list = listRef.current;
@@ -156,6 +165,24 @@ export const useList = ({
     updateScroll(currentTarget);
   };
 
+  // on down button click, LI CSS looks like hover state, updates active descendants, update scroll
+  const handleNextButton = (element: Element) => {
+    console.log("======> handleNextButton");
+    // if no AD, set first LI as AD and update scroll
+    // if yes AD, set as AD and update scroll
+    // setActiveDescendant(element.id); // if an item is AD but not selected, do styles follow as well
+    // updateScroll(element);
+  };
+
+  // on up button click, LI CSS looks like hover state, updates active descendants, update scroll
+  const handlePrevButton = (element: Element) => {
+    console.log("======> handlePrevButton");
+    // if no AD, set first LI as AD and update scroll
+    // if yes AD, set as AD and update scroll
+    // setActiveDescendant(element.id); // if an item is AD but not selected, do styles follow as well
+    // updateScroll(element);
+  };
+
   const handleBlur = useEventCallback(() => {
     setFocusedIndex(null);
     if (onBlur) {
@@ -165,7 +192,7 @@ export const useList = ({
 
   const handleMouseDown = useEventCallback(() => {
     setMouseDown(true);
-    onMouseDown()
+    onMouseDown();
   });
 
   const handleFocus = useEventCallback(() => {
@@ -231,6 +258,7 @@ export const useList = ({
     if (onKeyDown) {
       onKeyDown(currentItem);
     }
+
     return;
   });
 
@@ -239,6 +267,38 @@ export const useList = ({
     // sets list in first render
     list = listRef.current;
   }, []);
+
+  useEffect(() => {
+    const downButton = downButtonRef.current;
+
+    // check if a button has been attached to this ref, add event listener
+    if (downButton) {
+      console.log("useEffect downButton called");
+      downButton.addEventListener("keydown", handleNextButton);
+      downButton.addEventListener("mousedown", handleNextButton);
+
+      return () => {
+        downButton.removeEventListener("keydown", handleNextButton);
+        downButton.removeEventListener("mousedown", handleNextButton);
+      };
+    }
+  }, [downButtonRef.current, handleNextButton]);
+
+  useEffect(() => {
+    const upButton = upButtonRef.current;
+
+    // check if a button has been attached to this ref, add event listener
+    if (upButton) {
+      console.log("useEffect upButton called");
+      upButton.addEventListener("keydown", handlePrevButton);
+      upButton.addEventListener("mousedown", handlePrevButton);
+
+      return () => {
+        upButton.removeEventListener("keydown", handlePrevButton);
+        upButton.removeEventListener("mousedown", handlePrevButton);
+      };
+    }
+  }, [upButtonRef.current, handlePrevButton]);
 
   useEffect(() => {
     const prepare = (list: HTMLUListElement) => {
@@ -280,5 +340,8 @@ export const useList = ({
     selectedIndexes,
     activeDescendant,
     handleClick,
+    handleButtons: () => {
+      console.log("buttons handled");
+    },
   };
 };

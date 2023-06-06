@@ -55,11 +55,19 @@ export interface ListNextProps extends HTMLAttributes<HTMLUListElement> {
    * Note that this determines the max height of the list.
    */
   displayedItemCount?: number;
+
+  // option 1: let the wrapper ignore everything, user takes care of all the logic ( alittle difficult with current list)
+  // option 2: listeners, 3 refs on 3 buttons, many event handlers, hook gets big, more extraction
+  // option 3: 1 prop added to ListNext to handle all external handlers need. onButtonClick handler will trigger all other handlers in hook
+
   // ListNextControlProps
   onBlur?: FocusEventHandler;
   onFocus?: FocusEventHandler;
   onKeyDown?: KeyboardEventHandler;
   onMouseDown?: MouseEventHandler;
+  downButtonRef?: MouseEventHandler | KeyboardEventHandler;
+  upButtonRef?: MouseEventHandler | KeyboardEventHandler;
+  selectButtonRef?: MouseEventHandler | KeyboardEventHandler;
 }
 
 export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
@@ -79,6 +87,9 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
       onBlur,
       onKeyDown,
       onMouseDown,
+      downButtonRef,
+      upButtonRef,
+      selectButtonRef,
       style,
       ...rest
     },
@@ -95,7 +106,8 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
     const emptyList = childrenCount === 0;
     const selectedDisabled =
       Children.toArray(children).findIndex(
-        (child) => isValidElement(child) && child.props.disabled && child.props.selected
+        (child) =>
+          isValidElement(child) && child.props.disabled && child.props.selected
       ) !== -1;
     const disabled = disabledListProp || selectedDisabled;
     const listId = useId(idProp); // TODO: check why useId needs to return undefined
@@ -118,6 +130,7 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
       selectedIndexes,
       activeDescendant,
       handleClick,
+      handleButtons,
     } = useList({
       children,
       deselectable,
@@ -126,6 +139,9 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
       onKeyDown,
       onBlur,
       onMouseDown,
+      downButtonRef,
+      upButtonRef,
+      selectButtonRef,
     });
 
     const forkedRef = useForkRef(ref, listRef);
@@ -151,9 +167,7 @@ export const ListNext = forwardRef<HTMLUListElement, ListNextProps>(
           id: `list-${listId}--list-item--${index}`,
         };
 
-        return (
-          cloneElement(listItem, { ...listItemProps })
-        );
+        return cloneElement(listItem, { ...listItemProps });
       });
     };
 
