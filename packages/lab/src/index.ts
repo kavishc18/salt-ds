@@ -13,6 +13,8 @@ export {
   ListItemBase as ListItemBaseDeprecated,
   useListItem as useListItemDeprecated,
 } from "./list-deprecated";
+export type { InputLegacyProps as InputProps } from "./input-legacy";
+export type { FormFieldLegacyProps as FormFieldProps } from "./form-field-legacy";
 
 export * from "./accordion";
 export * from "./app-header";
@@ -34,19 +36,11 @@ export * from "./dialog";
 export * from "./dropdown";
 export * from "./editable-label";
 export * from "./file-drop-zone";
-export {
-  FormFieldLegacy as FormField,
-  type FormFieldLegacyProps as FormFieldProps,
-  FormLabel,
-} from "./form-field-legacy";
+export { FormFieldLegacy as FormField, FormLabel } from "./form-field-legacy";
 export * from "./form-field-context-legacy";
 export * from "./form-group";
 export * from "./formatted-input";
-export {
-  InputLegacy as Input,
-  type InputLegacyProps as InputProps,
-  StaticInputAdornment,
-} from "./input-legacy";
+export { InputLegacy as Input, StaticInputAdornment } from "./input-legacy";
 export * from "./layer-layout";
 export * from "./list";
 export * from "./list-next";
