@@ -11,14 +11,33 @@ data:
 
 <LivePreviewControls>
 
-<LivePreview componentName="component-name" exampleName="ComponentExample" title="Component Example Title">
+<LivePreview componentName="avatar" exampleName="Sizes" title="Sizes">
 
-Brief description of this example. The text should be copied from the
-corresponding example in the content template's "Examples" section.
+Each Avatar variant has a default size across all four densities, equal to the size foundation size-base; 20px (HD), 28px (MD), 36px (LD), and 44px (TD).
+You can change the size of an Avatar in multiples of the base size.
 
-The `title` prop is optional. If you omit it, the `exampleName` will be used
-as a title for this example (with spaces inserted, so "ComponentExample" would
-display as "Component Example").
+</LivePreview>
+
+<LivePreview componentName="avatar" exampleName="fallBack" title="Fallback">
+
+If a photo is not available, the Avatar will fall back to initials or an icon:
+
+- `Initials` can be used when a photo is unavailable but profile information is;
+- `Icon` can be used when neither a photo nor profile information are available.
+
+</LivePreview>
+
+<LivePreview componentName="avatar" exampleName="alternativeFallback" title="Alternative fallback icon">
+
+Avatar renders with an icon defined by `UserSolidIcon` but an alternative icon can be passed as `fallbackIcon`.
+
+</LivePreview>
+
+<LivePreview componentName="avatar" exampleName="customImage" title="Custom image or SVG">
+
+You can pass a custom image or SVG as the child of the component to be used as an image.
+
+Note that for images passed as children, you will also need to handle the fallback logic.
 
 </LivePreview>
 
