@@ -2,29 +2,39 @@ import { FC, ReactNode, Fragment } from "react";
 
 export interface KeyboardControlProps {
   children: ReactNode;
-  keyOrCombos: string[];
+
+  /**
+   * The keyboard key(s) or combo(s) being described.
+   *
+   * Use "+" to indcate combos - i.e. when more than one key
+   * need to pressed at the same time (e.g. "CTRL + A").
+   *
+   * Use "/" to separate alternative keys or combos.
+   * E.g. "SPACE / ENTER"
+   *
+   * You can combine alternate combos too.
+   * E.g.: "CTRL + A / CMD + A"
+   */
+  keyOrCombos: string;
+
   className?: string;
 }
 
-const comboSeparator = /\s*\+\s*/;
+const keyOrComboSeparator = /\s*([\+\/])\s*/;
 
 function splitCombo(keyOrCombo: string): string[] {
-  return keyOrCombo.split(comboSeparator);
+  return keyOrCombo.split(keyOrComboSeparator);
 }
 
-const KeyCombo: FC<{ keyOrCombo: string }> = ({ keyOrCombo }) => {
+const Keys: FC<{ keyOrCombos: string }> = ({ keyOrCombos }) => {
   return (
     <>
-      {splitCombo(keyOrCombo).map((key, index) => {
-        if (index > 0) {
-          return (
-            <Fragment key={index}>
-              {" + "}
-              <kbd>{key}</kbd>
-            </Fragment>
-          );
+      {splitCombo(keyOrCombos).map((keyOrSeparator, index) => {
+        // Odd indexes will be the "+" or "/" separators
+        if (index % 2 === 1) {
+          return <Fragment key={index}> {keyOrSeparator} </Fragment>;
         }
-        return <kbd key={index}>{key}</kbd>;
+        return <kbd key={index}>{keyOrSeparator}</kbd>;
       })}
     </>
   );
@@ -38,17 +48,7 @@ export const KeyboardControl: FC<KeyboardControlProps> = ({
   return (
     <tr className={className}>
       <td>
-        {keyOrCombos.map((keyOrCombo, index) => {
-          if (index > 0) {
-            return (
-              <Fragment key={index}>
-                {" / "}
-                <KeyCombo keyOrCombo={keyOrCombo} />
-              </Fragment>
-            );
-          }
-          return <KeyCombo key={index} keyOrCombo={keyOrCombo} />;
-        })}
+        <Keys keyOrCombos={keyOrCombos} />
       </td>
       <td>{children}</td>
     </tr>
